@@ -37,7 +37,7 @@ class PoissonEditor:
         nonzero = np.nonzero(mask)
         points = list(zip(nonzero[0], nonzero[1]))
         n = len(points)
-        #print(n)
+        print("process A")
         A = scipy.sparse.lil_matrix((n, n))
         #print(A.data)
         for i, index in enumerate(points):
@@ -48,7 +48,8 @@ class PoissonEditor:
                 j = points.index(x)
                 #print(A[i])
                 A[i,j] = 1
-        print("process A")
+
+        print("process b")
         b = np.zeros(n)
         for i, index in enumerate(points):
             b[i] = self.div(source, index)
@@ -56,9 +57,8 @@ class PoissonEditor:
                 for neighbor in self.neighbors(index):
                     if (mask[neighbor] != 1):
                         b[i] -= target[neighbor]
-        print(b)
+        print("calculate x")
         x = scipy.sparse.linalg.cg(A, b)
-        print(x)
         result = np.copy(target).astype(int)
         for i, index in enumerate(points):
             result[index] = x[0][i]
